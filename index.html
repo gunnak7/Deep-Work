@@ -33,7 +33,6 @@
       min-height: 100vh;
     }
 
-    /* ── Header ── */
     .header {
       display: flex;
       align-items: center;
@@ -50,18 +49,15 @@
 
     .header-logo { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
     .header-logo span { color: var(--accent); }
-
     .header-alltime { font-size: 13px; color: var(--muted-mid); }
     .header-alltime strong { color: var(--accent); font-weight: 600; }
 
-    /* ── Main layout ── */
     .main {
       max-width: 960px;
       margin: 0 auto;
       padding: 0 36px 80px;
     }
 
-    /* ── Timer section ── */
     .timer-section {
       display: flex;
       flex-direction: column;
@@ -70,7 +66,6 @@
       gap: 20px;
     }
 
-    /* Row: timer display + progress bar side by side */
     .timer-row {
       display: flex;
       align-items: center;
@@ -94,7 +89,6 @@
       text-shadow: 0 0 80px rgba(74, 222, 128, 0.22);
     }
 
-    /* ── Vertical Progress Bar ── */
     .progress-outer {
       display: flex;
       flex-direction: row;
@@ -104,7 +98,7 @@
 
     .progress-bar {
       display: flex;
-      flex-direction: column-reverse; /* seg 0 = 1h at bottom, seg 7 = 8h at top */
+      flex-direction: column-reverse;
       gap: 4px;
       width: 16px;
     }
@@ -131,7 +125,7 @@
 
     .progress-labels {
       display: flex;
-      flex-direction: column-reverse; /* label 1h at bottom, 8h at top */
+      flex-direction: column-reverse;
       gap: 4px;
     }
 
@@ -148,7 +142,6 @@
 
     .prog-label.lit { color: var(--muted-mid); }
 
-    /* ── Timer sub / controls ── */
     .timer-sub { font-size: 14px; color: var(--muted-mid); letter-spacing: 0.2px; }
     .timer-sub strong { color: var(--accent); font-weight: 600; }
 
@@ -159,7 +152,6 @@
       margin-top: 4px;
     }
 
-    /* ── Buttons ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -176,26 +168,20 @@
     }
 
     .btn:active { transform: scale(0.97); }
-
     .btn-start { background: var(--accent); color: #000; min-width: 120px; }
     .btn-start:hover { background: #6ee7a0; }
-
     .btn-pause { background: var(--amber); color: #000; min-width: 120px; }
     .btn-pause:hover { background: #fbbf24; }
-
     .btn-ghost {
       background: var(--raised);
       color: var(--muted-mid);
       border: 1px solid var(--border);
       padding: 11px 20px;
     }
-
     .btn-ghost:hover { color: var(--text); border-color: var(--border-mid); }
 
-    /* ── Divider ── */
     .divider { height: 1px; background: var(--border); }
 
-    /* ── Stats row ── */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -229,7 +215,6 @@
     .stat-value .unit { font-size: 15px; font-weight: 400; color: var(--muted-mid); margin-left: 3px; }
     .stat-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-    /* ── Chart section ── */
     .chart-section { padding: 32px 0; }
 
     .section-header {
@@ -274,7 +259,6 @@
 
     .view-btn.active { background: var(--raised); color: var(--text); }
 
-    /* Bar chart */
     .bar-chart-wrap { position: relative; }
 
     .bar-chart {
@@ -339,7 +323,6 @@
     }
 
     .bar-fill.has-data::after { background: var(--accent); }
-
     .bar-fill.is-current::after {
       background: var(--accent);
       box-shadow: 0 0 10px var(--accent);
@@ -380,11 +363,8 @@
 
     .bar-label.is-current { color: var(--accent); font-weight: 600; }
 
-    /* ── Heatmap section ── */
     .heatmap-section { padding: 32px 0 0; }
-
     .heatmap-scroll { overflow-x: auto; padding-bottom: 4px; }
-
     .heatmap-month-row { display: flex; gap: 3px; margin-bottom: 5px; }
 
     .heatmap-month-cell {
@@ -397,7 +377,6 @@
     }
 
     .heatmap-grid { display: flex; gap: 3px; }
-
     .heatmap-col { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
 
     .cell {
@@ -438,7 +417,6 @@
     .legend-cell[data-lvl="5"] { background: #4ade80; }
     .heatmap-scale { font-size: 11px; color: var(--muted); }
 
-    /* ── Floating tooltip ── */
     #ftip {
       position: fixed;
       background: #1e1e1e;
@@ -458,7 +436,6 @@
     #ftip .tip-time { color: var(--accent); font-weight: 600; }
     #ftip .tip-date { color: var(--muted-mid); font-size: 11px; }
 
-    /* ── Responsive ── */
     @media (max-width: 680px) {
       .header { padding: 0 20px; }
       .main { padding: 0 20px 60px; }
@@ -485,11 +462,9 @@
 
 <main class="main">
 
-  <!-- Timer -->
   <div class="timer-section">
     <div class="timer-row">
       <div class="timer-display" id="timer-disp">00:00:00</div>
-      <!-- Vertical progress bar -->
       <div class="progress-outer">
         <div class="progress-bar" id="progress-bar"></div>
         <div class="progress-labels" id="progress-labels"></div>
@@ -504,7 +479,6 @@
 
   <div class="divider"></div>
 
-  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">Today</div>
@@ -525,7 +499,6 @@
 
   <div class="divider"></div>
 
-  <!-- Bar chart -->
   <div class="chart-section">
     <div class="section-header">
       <span class="section-title">Focus Hours</span>
@@ -543,7 +516,6 @@
 
   <div class="divider"></div>
 
-  <!-- Heatmap -->
   <div class="heatmap-section">
     <div class="section-header">
       <span class="section-title">History</span>
@@ -572,9 +544,6 @@
 </main>
 
 <script>
-// ─────────────────────────────────────────────────────────────────
-// Storage
-// ─────────────────────────────────────────────────────────────────
 const KEY = 'dw_v1';
 
 function load() {
@@ -586,7 +555,6 @@ function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
 
 function todayKey() { return new Date().toISOString().slice(0, 10); }
 
-// Commit only the NEW seconds since last commit — keeps elapsed intact
 function commitSession() {
   const newSecs = elapsed - committed;
   if (newSecs <= 0) return;
@@ -597,13 +565,11 @@ function commitSession() {
   committed = elapsed;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Timer State
-// ─────────────────────────────────────────────────────────────────
-let elapsed   = 0;   // total seconds on current session clock (never reset on pause)
-let committed = 0;   // how much of elapsed has been written to localStorage
-let running   = false;
-let ticker    = null;
+let elapsed    = 0;
+let committed  = 0;
+let running    = false;
+let ticker     = null;
+let startStamp = null;
 
 const dispEl   = document.getElementById('timer-disp');
 const mainBtn  = document.getElementById('main-btn');
@@ -623,42 +589,58 @@ function fmtHM(s) {
   return h + 'h ' + m + 'm';
 }
 
+function calcElapsed() {
+  if (!running || startStamp === null) return elapsed;
+  return Math.floor((Date.now() - startStamp) / 1000);
+}
+
 function tick() {
-  elapsed++;
+  const prev = elapsed;
+  elapsed = calcElapsed();
+  if (elapsed === prev) return;
   dispEl.textContent = fmtClock(elapsed);
-  // Live stats + progress bar every second
   refreshLive();
-  // Commit every 60s so progress survives unexpected closes
   if (elapsed % 60 === 0) commitSession();
 }
 
-// Start OR Resume
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && running) {
+    elapsed = calcElapsed();
+    dispEl.textContent = fmtClock(elapsed);
+    refreshLive();
+  }
+});
+
 mainBtn.addEventListener('click', () => {
   if (!running) {
     running = true;
+    startStamp = Date.now() - elapsed * 1000;
     dispEl.classList.add('running');
-    mainBtn.textContent = elapsed > 0 ? 'Pause' : 'Pause';
+    mainBtn.textContent = 'Pause';
     mainBtn.className = 'btn btn-pause';
-    ticker = setInterval(tick, 1000);
+    ticker = setInterval(tick, 500);
   } else {
-    // Pause — freeze timer, keep elapsed
+    elapsed = calcElapsed();
     clearInterval(ticker);
     ticker = null;
     running = false;
+    startStamp = null;
     dispEl.classList.remove('running');
-    commitSession();             // save progress so far
+    dispEl.textContent = fmtClock(elapsed);
+    commitSession();
     mainBtn.textContent = 'Resume';
     mainBtn.className = 'btn btn-start';
     renderAll();
   }
 });
 
-// Reset — commit whatever remains, then wipe the clock
 resetBtn.addEventListener('click', () => {
   if (running) {
+    elapsed = calcElapsed();
     clearInterval(ticker);
     ticker = null;
     running = false;
+    startStamp = null;
   }
   commitSession();
   elapsed   = 0;
@@ -670,14 +652,11 @@ resetBtn.addEventListener('click', () => {
   renderAll();
 });
 
-// Save on tab close / navigate away
-window.addEventListener('beforeunload', commitSession);
+window.addEventListener('beforeunload', () => {
+  if (running) elapsed = calcElapsed();
+  commitSession();
+});
 
-// ─────────────────────────────────────────────────────────────────
-// Live helpers
-// ─────────────────────────────────────────────────────────────────
-// Returns total seconds for a given date key, including any
-// uncommitted live elapsed if the key is today.
 function liveSecs(data, key) {
   return (data[key] || 0) + (key === todayKey() ? (elapsed - committed) : 0);
 }
@@ -700,7 +679,6 @@ function updateStats(data) {
   document.getElementById('s-today-h').innerHTML = Math.floor(todaySecs / 3600) + '<span class="unit">h</span>';
   document.getElementById('s-today-m').textContent = Math.floor(todaySecs / 60) + ' min total';
 
-  // This week (Sun–Sat)
   const now = new Date();
   const dow = now.getDay();
   let weekSecs = 0;
@@ -714,7 +692,6 @@ function updateStats(data) {
   document.getElementById('s-week-avg').textContent =
     (weekSecs / 3600 / 7).toFixed(1) + 'h avg / day';
 
-  // Best day ever
   let bestSecs = 0, bestKey = null;
   for (const [k, s] of Object.entries(data)) {
     const eff = k === tk ? liveSecs(data, k) : s;
@@ -734,18 +711,9 @@ function updateAlltime(data) {
   document.getElementById('alltime-val').textContent = fmtHM(total);
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Vertical Progress Bar
-// ─────────────────────────────────────────────────────────────────
 const PROG_COLORS = [
-  '#1a4731', // 1h — deepest forest green
-  '#14532d', // 2h
-  '#15803d', // 3h
-  '#16a34a', // 4h
-  '#22c55e', // 5h
-  '#4ade80', // 6h
-  '#86efac', // 7h
-  '#bbf7d0', // 8h — brightest mint
+  '#1a4731','#14532d','#15803d','#16a34a',
+  '#22c55e','#4ade80','#86efac','#bbf7d0',
 ];
 const PROG_MAX_HOURS = 8;
 
@@ -754,21 +722,16 @@ function buildProgressBar() {
   const labels = document.getElementById('progress-labels');
   bar.innerHTML = '';
   labels.innerHTML = '';
-
   for (let i = 0; i < PROG_MAX_HOURS; i++) {
-    // Segment
     const seg = document.createElement('div');
     seg.className = 'prog-seg';
     seg.id = 'pseg-' + i;
-
     const fill = document.createElement('div');
     fill.className = 'prog-seg-fill';
     fill.id = 'pseg-fill-' + i;
     fill.style.background = PROG_COLORS[i];
     seg.appendChild(fill);
     bar.appendChild(seg);
-
-    // Label (e.g. "1h", "2h" … "8h")
     const lbl = document.createElement('div');
     lbl.className = 'prog-label';
     lbl.id = 'prog-lbl-' + i;
@@ -779,52 +742,28 @@ function buildProgressBar() {
 
 function updateProgressBar(data) {
   const totalHours = liveSecs(data || load(), todayKey()) / 3600;
-
   for (let i = 0; i < PROG_MAX_HOURS; i++) {
     const fill = document.getElementById('pseg-fill-' + i);
-    const seg  = document.getElementById('pseg-' + i);
     const lbl  = document.getElementById('prog-lbl-' + i);
     if (!fill) continue;
-
-    const segStart = i;
-    const segEnd   = i + 1;
     let pct;
-
-    if (totalHours >= segEnd) {
-      pct = 100;
-    } else if (totalHours > segStart) {
-      pct = (totalHours - segStart) * 100;
-    } else {
-      pct = 0;
-    }
-
+    if (totalHours >= i + 1)      pct = 100;
+    else if (totalHours > i)      pct = (totalHours - i) * 100;
+    else                          pct = 0;
     fill.style.height = pct + '%';
-
-    // Glow on the currently-filling segment
-    if (pct > 0 && pct < 100) {
-      fill.style.boxShadow = '0 0 10px ' + PROG_COLORS[i] + 'aa';
-    } else {
-      fill.style.boxShadow = 'none';
-    }
-
+    fill.style.boxShadow = (pct > 0 && pct < 100) ? '0 0 10px ' + PROG_COLORS[i] + 'aa' : 'none';
     if (lbl) lbl.classList.toggle('lit', pct > 0);
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Bar Chart
-// ─────────────────────────────────────────────────────────────────
 let currentView = 'weekly';
-
-const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun',
-                      'Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function buildBarData(view) {
   const data = load();
   const tk   = todayKey();
   const now  = new Date();
 
-  // ── Weekly: last 7 days ──────────────────────────────────────
   if (view === 'weekly') {
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now);
@@ -832,15 +771,13 @@ function buildBarData(view) {
       const k = d.toISOString().slice(0, 10);
       const isToday = k === tk;
       return {
-        k,
-        secs: liveSecs(data, k),
+        k, secs: liveSecs(data, k),
         label: isToday ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' }),
         isCurrent: isToday,
       };
     });
   }
 
-  // ── Monthly: last 30 days ────────────────────────────────────
   if (view === 'monthly') {
     return Array.from({ length: 30 }, (_, i) => {
       const d = new Date(now);
@@ -855,42 +792,32 @@ function buildBarData(view) {
     });
   }
 
-  // ── Yearly: 12 months of current year ───────────────────────
   if (view === 'yearly') {
     const yr  = now.getFullYear();
-    const cur = now.getMonth(); // 0-indexed
+    const cur = now.getMonth();
     return MONTHS_SHORT.map((name, m) => {
       const isFuture  = m > cur;
       const isCurrent = m === cur;
       let secs = 0;
       if (!isFuture) {
         for (const [k, s] of Object.entries(data)) {
-          if (parseInt(k.slice(0, 4)) === yr &&
-              parseInt(k.slice(5, 7)) - 1 === m) {
+          if (parseInt(k.slice(0,4)) === yr && parseInt(k.slice(5,7)) - 1 === m)
             secs += k === tk ? liveSecs(data, k) : s;
-          }
         }
       }
-      return { k: yr + '-' + String(m + 1).padStart(2, '0'), secs, label: name, isCurrent, isFuture };
+      return { k: yr + '-' + String(m+1).padStart(2,'0'), secs, label: name, isCurrent, isFuture };
     });
   }
 
-  // ── All-time: one bar per year ───────────────────────────────
   if (view === 'alltime') {
     const curYear = now.getFullYear();
     const keys    = Object.keys(data);
-    const minYear = keys.length
-      ? Math.min(...keys.map(k => parseInt(k.slice(0, 4))))
-      : curYear;
-
-    const items = [];
+    const minYear = keys.length ? Math.min(...keys.map(k => parseInt(k.slice(0,4)))) : curYear;
+    const items   = [];
     for (let y = minYear; y <= curYear; y++) {
       let secs = 0;
-      for (const [k, s] of Object.entries(data)) {
-        if (parseInt(k.slice(0, 4)) === y) {
-          secs += k === tk ? liveSecs(data, k) : s;
-        }
-      }
+      for (const [k, s] of Object.entries(data))
+        if (parseInt(k.slice(0,4)) === y) secs += k === tk ? liveSecs(data, k) : s;
       items.push({ k: String(y), secs, label: String(y), isCurrent: y === curYear });
     }
     return items;
@@ -908,28 +835,20 @@ function renderBarChart(view) {
   items.forEach(({ secs, label, isCurrent, isFuture }) => {
     const item = document.createElement('div');
     item.className = 'bar-item' + (isFuture ? ' is-future' : '');
-
     const wrap = document.createElement('div');
     wrap.className = 'bar-fill-wrap';
-
     const fill = document.createElement('div');
     const pct  = (secs / maxSecs) * 100;
-    fill.className = 'bar-fill' +
-      (secs > 0  ? ' has-data'   : '') +
-      (isCurrent ? ' is-current' : '');
+    fill.className = 'bar-fill' + (secs > 0 ? ' has-data' : '') + (isCurrent ? ' is-current' : '');
     fill.style.height = Math.max(pct, secs > 0 ? 1.5 : 0) + '%';
-
     const tip = document.createElement('div');
     tip.className   = 'bar-tip';
     tip.textContent = isFuture ? '—' : (secs > 0 ? fmtHM(secs) : 'No sessions');
-
     fill.appendChild(tip);
     wrap.appendChild(fill);
-
     const lbl = document.createElement('div');
     lbl.className   = 'bar-label' + (isCurrent ? ' is-current' : '');
     lbl.textContent = label;
-
     item.appendChild(wrap);
     item.appendChild(lbl);
     chart.appendChild(item);
@@ -945,9 +864,6 @@ document.querySelectorAll('.view-btn').forEach(btn => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Heatmap
-// ─────────────────────────────────────────────────────────────────
 function lvl(secs) {
   const h = secs / 3600;
   if (h === 0) return 0;
@@ -968,8 +884,8 @@ function renderHeatmap() {
 
   const today    = new Date();
   const startSun = new Date(today);
-  startSun.setDate(startSun.getDate() - startSun.getDay()); // this Sunday
-  startSun.setDate(startSun.getDate() - 51 * 7);            // 52 weeks back
+  startSun.setDate(startSun.getDate() - startSun.getDay());
+  startSun.setDate(startSun.getDate() - 51 * 7);
 
   const totalWeeks  = 52;
   const monthLabels = [];
@@ -978,13 +894,11 @@ function renderHeatmap() {
   for (let w = 0; w < totalWeeks; w++) {
     const col = document.createElement('div');
     col.className = 'heatmap-col';
-
     for (let d = 0; d < 7; d++) {
       const date = new Date(startSun);
       date.setDate(date.getDate() + w * 7 + d);
       const cell = document.createElement('div');
       cell.className = 'cell';
-
       if (date > today) {
         cell.classList.add('future');
         cell.setAttribute('data-lvl', '0');
@@ -997,9 +911,7 @@ function renderHeatmap() {
         cell.addEventListener('mouseenter', onCellEnter);
         cell.addEventListener('mouseleave', onCellLeave);
       }
-
       col.appendChild(cell);
-
       if (d === 0) {
         const m = date.getMonth();
         if (m !== lastMonth) {
@@ -1008,7 +920,6 @@ function renderHeatmap() {
         }
       }
     }
-
     grid.appendChild(col);
   }
 
@@ -1021,7 +932,6 @@ function renderHeatmap() {
   }
 }
 
-// Floating tooltip
 const ftip     = document.getElementById('ftip');
 const ftipTime = document.getElementById('ftip-time');
 const ftipDate = document.getElementById('ftip-date');
@@ -1040,12 +950,9 @@ function onCellEnter(e) {
     { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' });
   ftip.classList.add('show');
 }
- 
+
 function onCellLeave() { ftip.classList.remove('show'); }
 
-// ─────────────────────────────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────────────────────────────
 function renderAll() {
   const data = load();
   const s    = liveSecs(data, todayKey());
