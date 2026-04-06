@@ -152,6 +152,40 @@
       margin-top: 4px;
     }
 
+    .backup-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .btn-backup {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-backup:hover { color: var(--muted-mid); border-color: var(--border-mid); }
+
+    #import-file { display: none; }
+
+    .backup-toast {
+      font-size: 11px;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .backup-toast.show { opacity: 1; }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -475,6 +509,12 @@
       <button class="btn btn-start" id="main-btn">Start</button>
       <button class="btn btn-ghost" id="reset-btn">Reset</button>
     </div>
+    <div class="backup-row">
+      <button class="btn-backup" id="export-btn">Export Data</button>
+      <button class="btn-backup" id="import-btn">Import Data</button>
+      <input type="file" id="import-file" accept=".json">
+      <span class="backup-toast" id="backup-toast"></span>
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -657,6 +697,54 @@ window.addEventListener('beforeunload', () => {
   commitSession();
 });
 
+// Export / Import
+function showToast(msg) {
+  const t = document.getElementById('backup-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  const data = load();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'deepwork-backup-' + todayKey() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Data exported ✓');
+});
+
+document.getElementById('import-btn').addEventListener('click', () => {
+  document.getElementById('import-file').click();
+});
+
+document.getElementById('import-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (typeof imported !== 'object' || Array.isArray(imported))
+        throw new Error('Invalid format');
+      const existing = load();
+      for (const [k, v] of Object.entries(imported)) {
+        existing[k] = Math.max(existing[k] || 0, v);
+      }
+      save(existing);
+      renderAll();
+      showToast('Data restored ✓');
+    } catch {
+      showToast('Import failed — invalid file');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
 function liveSecs(data, key) {
   return (data[key] || 0) + (key === todayKey() ? (elapsed - committed) : 0);
 }
@@ -675,7 +763,6 @@ function refreshLive() {
 function updateStats(data) {
   const tk = todayKey();
   const todaySecs = liveSecs(data, tk);
-
   document.getElementById('s-today-h').innerHTML = Math.floor(todaySecs / 3600) + '<span class="unit">h</span>';
   document.getElementById('s-today-m').textContent = Math.floor(todaySecs / 60) + ' min total';
 
@@ -747,9 +834,9 @@ function updateProgressBar(data) {
     const lbl  = document.getElementById('prog-lbl-' + i);
     if (!fill) continue;
     let pct;
-    if (totalHours >= i + 1)      pct = 100;
-    else if (totalHours > i)      pct = (totalHours - i) * 100;
-    else                          pct = 0;
+    if (totalHours >= i + 1)  pct = 100;
+    else if (totalHours > i)  pct = (totalHours - i) * 100;
+    else                      pct = 0;
     fill.style.height = pct + '%';
     fill.style.boxShadow = (pct > 0 && pct < 100) ? '0 0 10px ' + PROG_COLORS[i] + 'aa' : 'none';
     if (lbl) lbl.classList.toggle('lit', pct > 0);
