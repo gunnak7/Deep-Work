@@ -174,7 +174,6 @@
     .cell[data-lvl="3"] { background:#15803d; }
     .cell[data-lvl="4"] { background:#22c55e; }
     .cell[data-lvl="5"] { background:#4ade80; }
-    /* Star overlay on cell */
     .cell-star {
       position:absolute; top:-5px; right:-4px;
       font-size:9px; line-height:1; color:var(--star);
@@ -418,9 +417,7 @@
   <div class="modal">
     <div class="modal-title">Log Output ★</div>
     <div class="modal-sub" id="output-modal-sub">Today: 0h 0m</div>
-    <!-- Existing outputs -->
     <div class="modal-outputs-list" id="output-modal-list"></div>
-    <!-- Add new -->
     <textarea class="modal-textarea" id="output-modal-text" placeholder="What did you accomplish?"></textarea>
     <div class="modal-actions">
       <button class="modal-cancel" id="output-cancel">Done</button>
@@ -464,7 +461,7 @@
 
   <div class="divider"></div>
 
-  <!-- Stats (4 cards) -->
+  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">Today</div>
@@ -555,10 +552,6 @@
 </main>
 
 <script>
-// ─────────────────────────────────────────────────────────────────
-// Storage — v2 format: { "2026-04-24": { secs: N, outputs: [...] } }
-// Auto-migrates from v1 (plain numbers)
-// ─────────────────────────────────────────────────────────────────
 const KEY = 'dw_v1';
 
 function load() {
@@ -577,7 +570,10 @@ function load() {
 }
 
 function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
-function todayKey() { return new Date().toISOString().slice(0, 10); }
+function dateKey(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function todayKey() { return dateKey(new Date()); }
 
 function getDay(data, key) {
   return data[key] || { secs: 0, outputs: [] };
@@ -626,17 +622,10 @@ function deleteOutput(key, id) {
   save(d);
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Timer
-// ─────────────────────────────────────────────────────────────────
-let elapsed    = 0;
-let committed  = 0;
-let running    = false;
-let ticker     = null;
-let startStamp = null;
-
-const dispEl   = document.getElementById('timer-disp');
-const mainBtn  = document.getElementById('main-btn');
+// ── Timer ──
+let elapsed = 0, committed = 0, running = false, ticker = null, startStamp = null;
+const dispEl = document.getElementById('timer-disp');
+const mainBtn = document.getElementById('main-btn');
 const resetBtn = document.getElementById('reset-btn');
 
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -705,9 +694,7 @@ resetBtn.addEventListener('click', () => {
 
 window.addEventListener('beforeunload', () => { if (running) elapsed=calcElapsed(); commitSession(); });
 
-// ─────────────────────────────────────────────────────────────────
-// Export / Import
-// ─────────────────────────────────────────────────────────────────
+// ── Export / Import ──
 function showToast(msg) {
   const t = document.getElementById('backup-toast');
   t.textContent=msg; t.classList.add('show');
@@ -738,7 +725,6 @@ document.getElementById('import-file').addEventListener('change', e=>{
         const importedOuts = typeof v==='object' && Array.isArray(v.outputs) ? v.outputs : [];
         if (!existing[k]) existing[k]={secs:0,outputs:[]};
         existing[k].secs = Math.max(existing[k].secs||0, importedSecs);
-        // merge outputs by id
         const existingIds = new Set((existing[k].outputs||[]).map(o=>o.id));
         for (const o of importedOuts) { if (!existingIds.has(o.id)) existing[k].outputs.push(o); }
       }
@@ -749,9 +735,7 @@ document.getElementById('import-file').addEventListener('change', e=>{
   reader.readAsText(file);
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Edit Today Modal
-// ─────────────────────────────────────────────────────────────────
+// ── Edit Today Modal ──
 const editTodayOverlay = document.getElementById('edit-today-overlay');
 
 document.getElementById('edit-today-btn').addEventListener('click', ()=>{
@@ -769,7 +753,6 @@ document.getElementById('edit-today-save').addEventListener('click', ()=>{
   const h=parseInt(document.getElementById('edit-hours').value)||0;
   const m=parseInt(document.getElementById('edit-mins').value)||0;
   const secs=h*3600+m*60;
-  // Reset session clock too so timer display is consistent
   if (running) { clearInterval(ticker); ticker=null; running=false; startStamp=null; dispEl.classList.remove('running'); mainBtn.textContent='Start'; mainBtn.className='btn btn-start'; }
   committed=0; elapsed=0; dispEl.textContent=fmtClock(0);
   setDaySecs(todayKey(), secs);
@@ -777,9 +760,7 @@ document.getElementById('edit-today-save').addEventListener('click', ()=>{
   renderAll();
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Edit Past Day Time Modal
-// ─────────────────────────────────────────────────────────────────
+// ── Edit Past Day Modal ──
 const editDayOverlay = document.getElementById('edit-day-overlay');
 let editDayKey = null;
 
@@ -806,9 +787,7 @@ document.getElementById('edit-day-save').addEventListener('click', ()=>{
   renderAll();
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Log Output Modal
-// ─────────────────────────────────────────────────────────────────
+// ── Log Output Modal ──
 const outputOverlay = document.getElementById('output-overlay');
 
 function openOutputModal() {
@@ -856,14 +835,11 @@ document.getElementById('output-add').addEventListener('click', ()=>{
 document.getElementById('output-cancel').addEventListener('click', ()=>{ outputOverlay.classList.remove('show'); renderAll(); });
 outputOverlay.addEventListener('click', e=>{ if(e.target===outputOverlay){ outputOverlay.classList.remove('show'); renderAll(); } });
 
-// Allow Enter to add output
 document.getElementById('output-modal-text').addEventListener('keydown', e=>{
   if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); document.getElementById('output-add').click(); }
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Live helpers
-// ─────────────────────────────────────────────────────────────────
+// ── Live helpers ──
 function liveSecs(data, key) {
   return getDay(data,key).secs + (key===todayKey() ? Math.max(0,elapsed-committed) : 0);
 }
@@ -890,7 +866,7 @@ function updateStats(data) {
   for (let i=0;i<7;i++){
     const d=new Date(now); d.setDate(d.getDate()-dow+i);
     if (d>now) break;
-    weekSecs+=liveSecs(data, d.toISOString().slice(0,10));
+    weekSecs+=liveSecs(data, dateKey(d));
   }
   document.getElementById('s-week-h').innerHTML=Math.floor(weekSecs/3600)+'<span class="unit">h</span>';
   document.getElementById('s-week-avg').textContent=(weekSecs/3600/7).toFixed(1)+'h avg / day';
@@ -904,7 +880,6 @@ function updateStats(data) {
   document.getElementById('s-best-date').textContent=bestKey
     ?new Date(bestKey+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
 
-  // Stars card
   const now2=new Date(), yr=now2.getFullYear(), mo=now2.getMonth();
   const monthName=now2.toLocaleDateString('en-US',{month:'long'});
   let starCount=0;
@@ -918,14 +893,11 @@ function updateStats(data) {
 }
 
 function updateAlltime(data) {
-  const tk=todayKey();
   const total=Object.entries(data).reduce((acc,[k,v])=>acc+liveSecs(data,k),0);
   document.getElementById('alltime-val').textContent=fmtHM(total);
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Progress Bar
-// ─────────────────────────────────────────────────────────────────
+// ── Progress Bar ──
 const PROG_COLORS=['#1a4731','#14532d','#15803d','#16a34a','#22c55e','#4ade80','#86efac','#bbf7d0'];
 const PROG_MAX_HOURS=8;
 
@@ -953,9 +925,7 @@ function updateProgressBar(data) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Bar Chart
-// ─────────────────────────────────────────────────────────────────
+// ── Bar Chart ──
 let currentView='weekly';
 const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -965,7 +935,7 @@ function buildBarData(view) {
   if (view==='weekly') {
     return Array.from({length:7},(_,i)=>{
       const d=new Date(now); d.setDate(d.getDate()-(6-i));
-      const k=d.toISOString().slice(0,10), isToday=k===tk;
+      const k=dateKey(d), isToday=k===tk;
       return {k, secs:liveSecs(data,k), outputs:(getDay(data,k).outputs||[]),
         label:isToday?'Today':d.toLocaleDateString('en-US',{weekday:'short'}), isCurrent:isToday};
     });
@@ -973,7 +943,7 @@ function buildBarData(view) {
   if (view==='monthly') {
     return Array.from({length:30},(_,i)=>{
       const d=new Date(now); d.setDate(d.getDate()-(29-i));
-      const k=d.toISOString().slice(0,10), isToday=k===tk;
+      const k=dateKey(d), isToday=k===tk;
       let label='';
       if (isToday) label='Today';
       else if (i===0||i%5===0) label=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -993,7 +963,7 @@ function buildBarData(view) {
           }
         }
       }
-      return {k:yr+'-'+String(m+1).padStart(2,'0'), secs, outputs, label:name, isCurrent, isFuture};
+      return {k:yr+'-'+String(m+1).padStart(2,'00'), secs, outputs, label:name, isCurrent, isFuture};
     });
   }
   if (view==='alltime') {
@@ -1022,7 +992,6 @@ function renderBarChart(view) {
     const item=document.createElement('div');
     item.className='bar-item'+(isFuture?' is-future':'');
 
-    // Star above bar
     const starWrap=document.createElement('div');
     starWrap.className='bar-star-wrap';
     if (!isFuture && outputs && outputs.length>0) {
@@ -1055,9 +1024,7 @@ document.getElementById('chart-toggle').querySelectorAll('.view-btn').forEach(bt
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// Heatmap  (Weekly / Monthly / Yearly / All-time toggle)
-// ─────────────────────────────────────────────────────────────────
+// ── Heatmap ──
 function lvl(secs){
   const h=secs/3600;
   if(h===0)return 0; if(h<1)return 1; if(h<2)return 2; if(h<4)return 3; if(h<6)return 4; return 5;
@@ -1079,7 +1046,6 @@ function renderHeatmap(){
   else renderHmGrid(c, currentHeatmapView);
 }
 
-/* ── Weekly: current Sun–Sat, large cells, no scroll ── */
 function renderHmWeekly(container){
   const data=load(), tk=todayKey(), today=new Date();
   const weekStart=new Date(today);
@@ -1089,7 +1055,7 @@ function renderHmWeekly(container){
 
   for(let i=0;i<7;i++){
     const d=new Date(weekStart); d.setDate(weekStart.getDate()+i);
-    const k=d.toISOString().slice(0,10);
+    const k=dateKey(d);
     const isFuture=d>today, isToday=k===tk;
     const dayData=getDay(data,k);
     const secs=isToday?liveSecs(data,k):dayData.secs;
@@ -1125,7 +1091,6 @@ function renderHmWeekly(container){
   container.appendChild(row);
 }
 
-/* ── Monthly: calendar grid for current month, no scroll ── */
 function renderHmMonthly(container){
   const data=load(), tk=todayKey(), today=new Date();
   const yr=today.getFullYear(), mo=today.getMonth();
@@ -1149,7 +1114,7 @@ function renderHmMonthly(container){
     const el=document.createElement('div'); el.className='hm-cal-cell hm-cal-empty'; grid.appendChild(el);
   }
   for(let day=1;day<=lastDay;day++){
-    const d=new Date(yr,mo,day), k=d.toISOString().slice(0,10);
+    const d=new Date(yr,mo,day), k=dateKey(d);
     const isFuture=d>today, isToday=k===tk;
     const dayData=getDay(data,k);
     const secs=isToday?liveSecs(data,k):dayData.secs;
@@ -1178,7 +1143,6 @@ function renderHmMonthly(container){
   container.appendChild(wrap);
 }
 
-/* ── Yearly / All-time: small cells, newest week on LEFT, scroll right = older ── */
 function renderHmGrid(container, view){
   const data=load(), tk=todayKey(), today=new Date();
 
@@ -1191,11 +1155,9 @@ function renderHmGrid(container, view){
     else { startDate=new Date(today); startDate.setDate(startDate.getDate()-364); }
   }
 
-  // Align to Sunday of start week
   const startSun=new Date(startDate);
   startSun.setDate(startSun.getDate()-startSun.getDay()); startSun.setHours(0,0,0,0);
 
-  // Sunday of current week
   const todaySun=new Date(today);
   todaySun.setDate(today.getDate()-today.getDay()); todaySun.setHours(0,0,0,0);
 
@@ -1209,7 +1171,6 @@ function renderHmGrid(container, view){
 
   let prevMonth=-1;
   for(let w=0;w<totalWeeks;w++){
-    // w=0 → most recent week; w=totalWeeks-1 → oldest week
     const weekIdx=totalWeeks-1-w;
     const weekSun=new Date(startSun); weekSun.setDate(startSun.getDate()+weekIdx*7);
     const m=weekSun.getMonth();
@@ -1225,7 +1186,7 @@ function renderHmGrid(container, view){
       if(date>today||date<startDate){
         cell.classList.add('future'); cell.setAttribute('data-lvl','0');
       } else {
-        const k=date.toISOString().slice(0,10);
+        const k=dateKey(date);
         const dayData=getDay(data,k);
         const secs=k===tk?liveSecs(data,k):dayData.secs;
         const outs=dayData.outputs||[];
@@ -1249,7 +1210,6 @@ function renderHmGrid(container, view){
   container.appendChild(scrollWrap);
 }
 
-// Floating tooltip
 const ftip=document.getElementById('ftip'), ftipTime=document.getElementById('ftip-time'), ftipDate=document.getElementById('ftip-date'), ftipOuts=document.getElementById('ftip-outputs');
 document.addEventListener('mousemove',e=>{ ftip.style.left=(e.clientX+14)+'px'; ftip.style.top=(e.clientY-42)+'px'; });
 
@@ -1265,9 +1225,7 @@ function onCellEnter(e){
 }
 function onCellLeave(){ ftip.classList.remove('show'); }
 
-// ─────────────────────────────────────────────────────────────────
-// Output Log Section
-// ─────────────────────────────────────────────────────────────────
+// ── Output Log ──
 let currentLogView='week';
 
 document.getElementById('log-toggle').querySelectorAll('.view-btn').forEach(btn=>{
@@ -1350,12 +1308,10 @@ function renderEntriesFor(key, outputs) {
         <button class="output-act-btn output-act-delete" data-key="${key}" data-id="${o.id}">Delete</button>
       </div>
     `;
-
     row.querySelector('.output-act-edit').addEventListener('click', ()=>startEditEntry(row, key, o));
     row.querySelector('.output-act-delete').addEventListener('click', ()=>{
       if (confirm('Delete this output?')){ deleteOutput(key, o.id); renderAll(); }
     });
-
     container.appendChild(row);
   });
 }
@@ -1377,9 +1333,7 @@ function startEditEntry(row, key, o) {
   row.querySelector('.output-act-cancel').addEventListener('click',()=>renderAll());
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────────────────────────────
+// ── Init ──
 function renderAll() {
   const data=load(), s=liveSecs(data,todayKey());
   document.getElementById('today-val').textContent=fmtHM(s);
